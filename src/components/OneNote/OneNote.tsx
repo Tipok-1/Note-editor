@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo, useEffect } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -12,17 +12,18 @@ import OneNoteButtons from './OneNoteButtons';
 import { Box } from '@mui/material';
 import { useAppSelector } from '../../hooks/redux';
 import TagChip from '../TagChip/TagChip';
-import { NameOrDescription } from '../../models/ITag';
+import NoteService from '../../Services/NoteService';
 
 interface IOneNote {
   note: INote,
-  setOpenForm:Function
+  setOpenForm: Function
 }
 
-const OneNote = ({ note, setOpenForm}: IOneNote) => {
+const OneNote = ({ note, setOpenForm }: IOneNote) => {
   const [expand, setExpand] = useState(false);
   const dispatch = useAppDispatch();
-  const editСallback = useCallback(() => setOpenForm(note), [])
+  const editСallback = useCallback(() => setOpenForm(note), [note.name, note.description, note.done])
+  const deleteCallback = useCallback(()=>NoteService.deleteNote(note, dispatch),[note.name, note.description]);
   const tags = useAppSelector(state => state.tagReducer.tags);
   const noteTags = useMemo(() => {
     if (note.tagsID.length) {
@@ -63,7 +64,7 @@ const OneNote = ({ note, setOpenForm}: IOneNote) => {
         }}>
           {note.name + (note.done ? " (Выполнено)" : '')}
         </Typography>
-        <OneNoteButtons onClick={editСallback} />
+        <OneNoteButtons onClickEdit={editСallback} onClickDelete={deleteCallback}/>
       </AccordionSummary>
       <AccordionDetails>
         {note.description &&
@@ -89,7 +90,7 @@ const OneNote = ({ note, setOpenForm}: IOneNote) => {
               component={'span'}
               sx={{ m: '10px 0', }}
             >Тэги</Typography>
-            <Box sx={{display:'flex'}}>
+            <Box sx={{ display: 'flex' }}>
               {noteTags.length && noteTags.map(tag => <TagChip key={tag?.id} label={tag?.name ? tag?.name : ''} />)}
             </Box>
           </Box>
@@ -101,4 +102,4 @@ const OneNote = ({ note, setOpenForm}: IOneNote) => {
   );
 };
 
-export default OneNote;
+export default memo(OneNote);

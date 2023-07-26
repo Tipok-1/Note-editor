@@ -1,5 +1,5 @@
-import { memo, useState, useMemo, useEffect } from 'react';
-import OneNote from '../OneNote.tsx/OneNote';
+import { memo, useState, useMemo, useCallback} from 'react';
+import OneNote from '../OneNote/OneNote';
 import Stack from '@mui/material/Stack';
 import { useAppSelector } from '../../hooks/redux';
 import { Category } from '../../store/reducers/NoteSlice';
@@ -9,12 +9,12 @@ import { INote } from '../../models/INote';
 
 
 const NoteList = () => {
-    const category = useAppSelector(state => state.noteReducer.Category);
-    const { notes } = useAppSelector(state => state.noteReducer)
+    const { notes, Search:search, Category:category } = useAppSelector(state => state.noteReducer)
+    const tags = useAppSelector(state=>state.tagReducer.tags)
+
     const [message, setMessage] = useState('');
     const [openForm, setOpenForm] = useState(false)
-    const [titleValue, setTitleValue] = useState('');
-    const [descriptionValue, setDescriptionValue] = useState('')
+    const [editableNote, setEditableNote] = useState<undefined | INote>(undefined)
 
     const allNotes = useMemo(() => {
         if (category == Category.ALL) {
@@ -30,6 +30,26 @@ const NoteList = () => {
         }
         return [];
     }, [category, notes])
+
+    const allNotesWithSearchFilters = useMemo(()=>{
+        if(search) {
+            return allNotes.filter((el)=>{
+                for(let i = 0; i < el.tagsID.length; i++) {
+                    const tag = tags.find(t=>t.id == el.tagsID[i]);
+                    if(tag && tag.name.startsWith('#'+ search)) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+        }
+        return allNotes
+    },[allNotes, search])
+
+    const OpenFormCallback = useCallback((note:INote)=>{
+        setEditableNote(note)
+        setOpenForm(true)
+    },[])
     return (
         <Stack sx={{
             flex: '1 1 auto',
@@ -37,26 +57,19 @@ const NoteList = () => {
             mt: '20px'
         }}
             spacing={2}>
-            {!allNotes.length && <Typography>{message}</Typography>}
-            {allNotes.map(note => <OneNote
+            {!allNotesWithSearchFilters.length && <Typography>{message}</Typography>}
+            {allNotesWithSearchFilters.map(note => <OneNote
                 key={note.id}
                 note={note}
-                setOpenForm={(note:INote)=>{
-                    setTitleValue(note.name);
-                    if(note.description) {
-                        setDescriptionValue(note.description);
-                    }
-                    setOpenForm(true)
-                }}
+                setOpenForm={OpenFormCallback}
             />)}
             <CustomDrawer
                 title={'Редактировать заметку'}
                 openForm={openForm}
                 onClose={() => setOpenForm(false)}
                 buttonAcceptText={'Сохранить'}
-                value='create'
-                titleInputValue={titleValue}
-                descriptionInputValue={descriptionValue}
+                value='edit'
+                note={editableNote}
             />
         </Stack>
 

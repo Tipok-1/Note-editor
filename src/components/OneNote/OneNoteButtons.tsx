@@ -6,9 +6,10 @@ import IconButton from '@mui/material/IconButton'
 
 interface IOneNoteButtons {
     indented?: boolean,
-    onClick: Function
+    onClickEdit: Function,
+    onClickDelete: Function
 }
-const OneNoteButtons = ({ indented, onClick }: IOneNoteButtons) => {
+const OneNoteButtons = ({ indented, onClickEdit, onClickDelete }: IOneNoteButtons) => {
     return (
         <>
             <Tooltip title="Редактировать" >
@@ -17,7 +18,7 @@ const OneNoteButtons = ({ indented, onClick }: IOneNoteButtons) => {
                     '&:hover': {
                         color: '#0288d1'
                     }
-                }} onClick={() => onClick()} >
+                }} onClick={() => onClickEdit()} >
                     <EditNoteIcon />
                 </IconButton>
             </Tooltip>
@@ -27,7 +28,7 @@ const OneNoteButtons = ({ indented, onClick }: IOneNoteButtons) => {
                     color: '#ef5350'
                 }
             }}>
-                <IconButton>
+                <IconButton onClick={() => onClickDelete()}>
                     <DeleteIcon />
                 </IconButton>
             </Tooltip>
