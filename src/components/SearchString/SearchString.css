@@ -1,0 +1,12 @@
+.listItem:hover{
+    cursor:pointer;
+}
+.List::-webkit-scrollbar{
+    width: 8px; 
+    background-color: #1976d2;
+    border-radius: 5px;
+}
+.List::-webkit-scrollbar-thumb {
+    background-color: #f16868;
+    border-radius: 5px;
+}
