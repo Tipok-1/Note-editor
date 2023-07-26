@@ -1,11 +1,11 @@
 export interface ITag {
-    id: number,
+    id: string,
     name: string,
     positionInText: number,
     location: NameOrDescription
 }
 
 export enum NameOrDescription {
-    Name = 'name',
-    Description = 'description'
+    NAME = 'name',
+    DESCRIPTION = 'description'
 }

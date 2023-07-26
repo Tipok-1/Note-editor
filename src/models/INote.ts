@@ -1,7 +1,7 @@
 export interface INote{
-    id:number,
+    id:string,
     name:string,
     description?:string,
     done:boolean,
-    tagsID:number[]
+    tagsID:string[]
 }
