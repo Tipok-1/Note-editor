@@ -1,0 +1,7 @@
+.Placeholder:empty:not(:focus):before{
+    content:attr(placeholder);
+    color:grey;
+}
+.BoxClass{
+    border: 2px solid #5b84ad;
+}
