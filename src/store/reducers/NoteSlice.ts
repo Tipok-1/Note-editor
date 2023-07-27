@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice} from '@reduxjs/toolkit'
 import { INote } from '../../models/INote'
+import { dbService } from '../../Services/dbServices';
 
 interface NoteState{
     notes:INote[],
@@ -38,7 +39,7 @@ export const noteSlice = createSlice({
         changeDone(state, action:PayloadAction<string>) {
             let note = state.notes.find(note=>note.id === action.payload);
             if(note) {
-                note.done = !note.done
+                note.done = !note.done;
             }
         },
         setCategory(state, action:PayloadAction<Category>){
