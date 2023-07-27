@@ -1,10 +1,10 @@
-import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice} from '@reduxjs/toolkit'
 import { INote } from '../../models/INote'
-import { RootState } from '../store';
 
 interface NoteState{
     notes:INote[],
-    Category:Category
+    Category:Category,
+    Search:string,
 }
 
 export enum Category{
@@ -14,16 +14,9 @@ export enum Category{
 }
 
 const initialState:NoteState = {
-    notes:[
-        {id:1,name:'note', description:"description description descriptiondescriptiondescription descriptiondescription description description", done:false,tagsID:[]},
-        {id:2,name:'note', description:"description description descriptiondescriptiondescription descriptiondescription description description", done:false,tagsID:[]},
-        {id:3,name:'note', description:"description description descriptiondescriptiondescription descriptiondescription description description", done:false,tagsID:[]},
-        {id:4,name:'note', done:false,tagsID:[]},
-        {id:5,name:'note', done:false,tagsID:[]},
-        {id:6,name:'note', description:"description description descriptiondescriptiondescription descriptiondescription description description", done:false,tagsID:[]},
-        {id:7,name:'note', done:false,tagsID:[]},
-    ],
-    Category:Category.ALL
+    notes:[],
+    Category:Category.ALL,
+    Search:'',
 }
 
 export const noteSlice = createSlice({
@@ -36,13 +29,13 @@ export const noteSlice = createSlice({
         addNote(state, action:PayloadAction<INote>) {
             state.notes.push(action.payload);
         },
-        deleteNote(state, action:PayloadAction<number>) {
+        deleteNote(state, action:PayloadAction<string>) {
             state.notes = state.notes.filter(note=>note.id != action.payload);
         },
         updateNote(state, action:PayloadAction<INote>) {
-            state.notes = state.notes.filter(note=>note.id == action.payload.id ? action.payload : note);
+            state.notes = state.notes.map(note=>note.id == action.payload.id ? action.payload : note);
         },
-        changeDone(state, action:PayloadAction<number>) {
+        changeDone(state, action:PayloadAction<string>) {
             let note = state.notes.find(note=>note.id === action.payload);
             if(note) {
                 note.done = !note.done
@@ -50,6 +43,9 @@ export const noteSlice = createSlice({
         },
         setCategory(state, action:PayloadAction<Category>){
             state.Category = action.payload;
+        },
+        setSearch(state, action:PayloadAction<string>){
+            state.Search = action.payload;
         }
     }
 })
