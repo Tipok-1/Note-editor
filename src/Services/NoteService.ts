@@ -4,6 +4,7 @@ import {tagSlice} from "../store/reducers/TagSlice";
 import {noteSlice} from "../store/reducers/NoteSlice";
 import { createId } from "./GeneralService";
 import { INote } from "../models/INote";
+import { dbService } from "./dbServices";
 
 class NoteService{
     _createTags(text:string, position:string, dispatch:AppDispatch, tagId:string[]){
@@ -15,12 +16,14 @@ class NoteService{
             splitText.forEach((el, i)=>{
                 if(el.match(/^#.+?$/i)) {
                     const id = createId()
-                    dispatch(tagSlice.actions.addTag({
+                    const tag = {
                         id,
                         name:el,
                         positionInText:i,
                         location: pos 
-                    }))
+                    }
+                    dispatch(tagSlice.actions.addTag(tag))
+                    dbService.addTag(tag);
                     tagId.push(id);
                 }
             })
@@ -45,12 +48,14 @@ class NoteService{
         }
         if(!updateMode) {
             dispatch(noteSlice.actions.addNote(note));
+            dbService.addNote(note);
         }
         return note;
         
     }
     _deleteTags(tagsID:string[], dispatch:AppDispatch){
         if(tagsID.length) {
+            dbService.deleteTags(tagsID);
             if(tagsID.length == 1) {
                 dispatch(tagSlice.actions.deleteTag(tagsID[0]))
             } else {
@@ -60,6 +65,7 @@ class NoteService{
     }
     deleteNote(note:INote, dispatch:AppDispatch){
         this._deleteTags(note.tagsID, dispatch);
+        dbService.deleteNote(note.id)
         dispatch(noteSlice.actions.deleteNote(note.id));
     }
     updateNote(oldNote:INote | undefined,n:string, desc:string, dispatch:AppDispatch){
@@ -70,6 +76,7 @@ class NoteService{
             if(oldNote.done) {
                 newNote.done = true;
             }
+            dbService.addNote(newNote);
             dispatch(noteSlice.actions.updateNote(newNote))
         }
     }

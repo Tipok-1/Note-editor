@@ -13,6 +13,7 @@ import { Box } from '@mui/material';
 import { useAppSelector } from '../../hooks/redux';
 import TagChip from '../TagChip/TagChip';
 import NoteService from '../../Services/NoteService';
+import { dbService } from '../../Services/dbServices';
 
 interface IOneNote {
   note: INote,
@@ -33,6 +34,9 @@ const OneNote = ({ note, setOpenForm }: IOneNote) => {
   }, [tags])
 
   function clickCheckbox(id: string) {
+    const changeDoneNote = Object.assign({}, note);
+    changeDoneNote.done = !note.done;
+    dbService.addNote(changeDoneNote);
     dispatch(noteSlice.actions.changeDone(id));
   }
 

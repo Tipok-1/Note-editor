@@ -1,4 +1,4 @@
-import { memo, useState, useMemo, useCallback} from 'react';
+import { memo, useState, useMemo, useCallback } from 'react';
 import OneNote from '../OneNote/OneNote';
 import Stack from '@mui/material/Stack';
 import { useAppSelector } from '../../hooks/redux';
@@ -6,11 +6,13 @@ import { Category } from '../../store/reducers/NoteSlice';
 import Typography from '@mui/material/Typography/Typography';
 import CustomDrawer from '../CustomDrawer/CustomDrawer';
 import { INote } from '../../models/INote';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 
-const NoteList = () => {
-    const { notes, Search:search, Category:category } = useAppSelector(state => state.noteReducer)
-    const tags = useAppSelector(state=>state.tagReducer.tags)
+const NoteList = ({ loading }: { loading: boolean }) => {
+    const { notes, Search: search, Category: category } = useAppSelector(state => state.noteReducer)
+    const tags = useAppSelector(state => state.tagReducer.tags)
 
     const [message, setMessage] = useState('');
     const [openForm, setOpenForm] = useState(false)
@@ -31,12 +33,12 @@ const NoteList = () => {
         return [];
     }, [category, notes])
 
-    const allNotesWithSearchFilters = useMemo(()=>{
-        if(search) {
-            return allNotes.filter((el)=>{
-                for(let i = 0; i < el.tagsID.length; i++) {
-                    const tag = tags.find(t=>t.id == el.tagsID[i]);
-                    if(tag && tag.name.startsWith('#'+ search)) {
+    const allNotesWithSearchFilters = useMemo(() => {
+        if (search) {
+            return allNotes.filter((el) => {
+                for (let i = 0; i < el.tagsID.length; i++) {
+                    const tag = tags.find(t => t.id == el.tagsID[i]);
+                    if (tag && tag.name.startsWith('#' + search)) {
                         return true;
                     }
                 }
@@ -44,12 +46,24 @@ const NoteList = () => {
             })
         }
         return allNotes
-    },[allNotes, search])
+    }, [allNotes, search])
 
-    const OpenFormCallback = useCallback((note:INote)=>{
+    const OpenFormCallback = useCallback((note: INote) => {
         setEditableNote(note)
         setOpenForm(true)
-    },[])
+    }, [])
+    if (loading) {
+        return (
+            <Box sx={{
+                height:'100%', 
+                width:'100%', 
+                display:'flex',
+                alignItems:'center',
+                justifyContent:'center'
+                }}>
+                <CircularProgress />
+            </Box>)
+    }
     return (
         <Stack sx={{
             flex: '1 1 auto',
