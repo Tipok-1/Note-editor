@@ -1,12 +1,10 @@
 import Drawer from '@mui/material/Drawer/Drawer';
 import { Container } from '@mui/material';
-import TextField from '@mui/material/TextField/TextField';
 import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { makeStyles } from '@mui/styles';
-import { Theme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import { useState, memo, useRef, useEffect } from 'react'
 import { useAppDispatch } from '../../hooks/redux';
 import CheckTagInput from '../CheckTagInput/CheckTagInput';
@@ -24,17 +22,21 @@ interface ICustomDrawer {
   note?: INote
 }
 
-
-const useStyles = makeStyles((theme: Theme) => ({
-  paper: {
-    width: theme.breakpoints?.values.md,
-    margin: 'auto'
+const StyledDrawer = styled(Drawer)(({ theme }) => ({
+  '& .MuiDrawer-paper': {
+    maxWidth: theme.breakpoints?.values.md,
+    margin: 'auto',
+    overflow: 'hidden',
+  },
+  [theme.breakpoints.down('sm')]: {
+    p:'40px 20px'
   }
-}));
+}))
+
+
 
 const CustomDrawer = ({ openForm, onClose, title, buttonAcceptText, value, note }: ICustomDrawer) => {
   const dispatch = useAppDispatch();
-  const classes = useStyles();
   const [getTitle, setGetTitle] = useState(false);
   const [getDescription, setGetDescription] = useState(false);
   const description = useRef('')
@@ -82,11 +84,10 @@ const CustomDrawer = ({ openForm, onClose, title, buttonAcceptText, value, note 
 
 
   return (
-    <Drawer
+    <StyledDrawer
       anchor='bottom'
       open={openForm}
       onClose={() => closeDrawer()}
-      classes={{ paper: classes.paper }}
 
     >
       <Container maxWidth='md' sx={{ padding: '40px' }}>
@@ -126,7 +127,7 @@ const CustomDrawer = ({ openForm, onClose, title, buttonAcceptText, value, note 
       <Slide direction="up" in={showAlert} mountOnEnter unmountOnExit>
         <Alert severity="error" sx={{ position: 'absolute', width: '60%', ml: '20%', top: '75%', }}>Поле 'Название' не может быть пустым </Alert>
       </Slide>
-    </Drawer>
+    </StyledDrawer>
   );
 };
 

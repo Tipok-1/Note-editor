@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import { Box } from '@mui/material';
 import SearchString from '../SearchString/SearchString'
 import MenuItem from '@mui/material/MenuItem';
@@ -12,9 +12,9 @@ import { noteSlice } from '../../store/reducers/NoteSlice';
 const ControlPanel = () => {
     const dispatch = useAppDispatch()
     const [selectValue, setSelectValue] = useState('')
-    function selectChange(e:SelectChangeEvent<string>){
+    function selectChange(e: SelectChangeEvent<string>) {
         setSelectValue(String(e.target.value));
-        switch(e.target.value){
+        switch (e.target.value) {
             case Category.ALL:
                 dispatch(noteSlice.actions.setCategory(Category.ALL));
                 break;
@@ -24,20 +24,28 @@ const ControlPanel = () => {
             case Category.OUTSTANDING:
                 dispatch(noteSlice.actions.setCategory(Category.OUTSTANDING));
                 break;
-                
+
         }
-        
+
     }
     return (
-        <Box sx={{
+        <Box sx={theme => ({
             height: '80px',
             display: 'flex',
             justifyContent: 'space-around',
-            alignItems: 'center'
-        }}
+            alignItems: 'center',
+            [theme.breakpoints.down('sm')]: {
+                flexDirection: 'column',
+                minHeight: '150px'
+            }
+        })}
         >
             <SearchString />
-            <FormControl>
+            <FormControl sx={theme => ({
+                [theme.breakpoints.down('sm')]: {
+                    width: '100%'
+                }
+            })}>
                 <InputLabel id="ControlPanel__Label">Категории</InputLabel>
                 <Select
                     labelId="ControlPanel__Label"
@@ -45,10 +53,10 @@ const ControlPanel = () => {
                     label="Категории"
                     variant="outlined"
                     sx={{
-                        minWidth: 200
+                        minWidth: 200,
                     }}
                     value={selectValue}
-                    onChange={(e)=>selectChange(e)}
+                    onChange={(e) => selectChange(e)}
                 >
                     <MenuItem value={Category['ALL']}>Все</MenuItem>
                     <MenuItem value={Category['COMPLETED']}>Выполненые</MenuItem>

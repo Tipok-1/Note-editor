@@ -35,11 +35,20 @@ const SearchString = () => {
                     setShowAutoComplete(false);
                 }
             }}
-            sx={{ position: 'relative' }}>
+            sx={theme=>({ 
+                position: 'relative',
+                [theme.breakpoints.down('sm')]:{
+                    width:'100%'
+                }
+             })}>
             <TextField
-                sx={{
+                autoComplete='off'
+                sx={theme=>({
                     width: '200px',
-                }}
+                    [theme.breakpoints.down('sm')]:{
+                        width:'100%'
+                    }
+                })}
                 InputProps={{
                     endAdornment: (
                         <InputAdornment position='end'>
@@ -61,7 +70,7 @@ const SearchString = () => {
                         backgroundColor: 'white',
                         visibility: showAutoComplete ? 'visible' : 'hidden',
                         overflow: 'auto',
-                        zIndex: '1',
+                        zIndex: '10',
                         position: 'absolute',
                         width: '100%',
                         outline: '1px solid grey',

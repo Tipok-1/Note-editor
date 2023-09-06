@@ -60,7 +60,7 @@ const CheckTagInput = ({getAllText, height, placeholder, InputValue, getTextRef}
         const next = e.currentTarget.parentElement?.nextElementSibling
         if(previous && next) {
             if(previous.tagName == 'P' && next.tagName == 'P') {
-                next.innerHTML = next.innerHTML+previous.innerHTML;
+                next.innerHTML = previous.innerHTML + next.innerHTML;
                 const arr = [...content.slice(0,index-1),...content.slice(index+1)];
                 setContent(arr);
             }

@@ -24,7 +24,7 @@ const OneNote = ({ note, setOpenForm }: IOneNote) => {
   const [expand, setExpand] = useState(false);
   const dispatch = useAppDispatch();
   const editСallback = useCallback(() => setOpenForm(note), [note.name, note.description, note.done])
-  const deleteCallback = useCallback(()=>NoteService.deleteNote(note, dispatch),[note.name, note.description]);
+  const deleteCallback = useCallback(() => NoteService.deleteNote(note, dispatch), [note.name, note.description]);
   const tags = useAppSelector(state => state.tagReducer.tags);
   const noteTags = useMemo(() => {
     if (note.tagsID.length) {
@@ -47,10 +47,18 @@ const OneNote = ({ note, setOpenForm }: IOneNote) => {
         borderRadius: '3px',
         '& .MuiAccordionSummary-root:hover, MuiAccordionSummary-root:hover:not(.Mui-disabled)': {
           cursor: 'default',
+        },
+        '& .MuiAccordionSummary-content':{
+          maxWidth:'calc(100% - 16px)',
+          wordWrap: 'break-word',
+          position:'relative'
         }
       }}>
       <AccordionSummary
-        style={{ cursor: 'default' }}
+        style={{
+          cursor: 'default',
+          justifyContent: 'flex-start',
+        }}
         expandIcon={<ExpandMoreIcon
           onClick={() => setExpand((prev) => !prev)}
           sx={{
@@ -60,15 +68,18 @@ const OneNote = ({ note, setOpenForm }: IOneNote) => {
         <Checkbox
           color='default'
           onClick={() => clickCheckbox(note.id)}
-          checked={note.done} />
+          checked={note.done}
+        />
         <Typography sx={{
-          display: 'flex',
+          display:'flex',
           alignItems: 'center',
-          textDecoration: note.done ? 'line-through' : 'none'
-        }}>
+          textDecoration: note.done ? 'line-through' : 'none',
+          maxWidth:'calc(100% - 122px)',
+          wordWrap: 'break-word',
+        }} >
           {note.name + (note.done ? " (Выполнено)" : '')}
         </Typography>
-        <OneNoteButtons onClickEdit={editСallback} onClickDelete={deleteCallback}/>
+        <OneNoteButtons onClickEdit={editСallback} onClickDelete={deleteCallback} />
       </AccordionSummary>
       <AccordionDetails>
         {note.description &&
@@ -79,7 +90,7 @@ const OneNote = ({ note, setOpenForm }: IOneNote) => {
               sx={{ m: '10px 0', }}>
               Описание
             </Typography>
-            <Typography>
+            <Typography sx={{ wordWrap: 'break-word'}}>
               {note.description}
             </Typography>
           </>
